@@ -380,7 +380,7 @@ Fuzz a range of ids/port numbers.
 
 `crunch 15 15 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*?=walkthrough%&0123456789" -t 123456789012345@ > wordlist.txt
 `
-<h3>Hash Examples</h3>
+## Hash Examples
 <p>Likely just use hash-identifier for this but here are some example hashes:</p>
 <table>
 <thead>
