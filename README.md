@@ -256,7 +256,7 @@ Community String is in both cases "private"
 
 `john --wordlist=/usr/share/wordlists/rockyou.txt hash`
 
-### curl
+## curl
 
 Download a file:
 
