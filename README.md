@@ -114,6 +114,7 @@ kill session by tag
 
 kill pane
 
+
 ## Nmap 
 
 `nmap -sV -sC -p- -oN [FILE] [IP]`
@@ -254,6 +255,73 @@ Community String is in both cases "private"
 ## John the ripper
 
 `john --wordlist=/usr/share/wordlists/rockyou.txt hash`
+
+### curl
+
+Download a file:
+
+```fundamental
+curl somesite.com/somefile.txt -o somefile.txt
+```
+
+Test a web server for various HTTP methods:
+
+```fundamental
+curl -i -X TRACE somesite.com
+
+curl -i -X OPTIONS somesite.com
+
+curl -i -X PUT somesite.com/somefile.txt -d 'pentest' -H 'Content-Type: text/plain'
+
+curl -i somesite.com -T somefile.pdf -H 'Content-Type: application/pdf'
+
+curl -i -X FAKEMETHOD somesite.com
+```
+
+Test a web server for a cross-site tracing (XST) attack:
+
+```fundamental
+curl -i -X TRACE -H 'XST: XST' somesite.com
+```
+
+Test a web server for an HTTP method overriding attack:
+
+```fundamental
+curl -i -X TRACE -H 'X-HTTP-Method: TRACE' somesite.com
+
+curl -i -X DELETE -H 'X-HTTP-Method-Override: DELETE' somesite.com/somefile.txt
+
+curl -i -X PUT -H 'X-Method-Override: PUT' somesite.com/somefile.txt -d 'pentest' -H 'Content-Type: text/plain'
+
+curl -i -H 'X-Method-Override: PUT' somesite.com -T somefile.pdf -H 'Content-Type: application/pdf'
+```
+
+| Option | Description |
+| --- | --- |
+| -d | Sends the specified data in a POST request to the HTTP server |
+| -H | Extra header to include in the request when sending HTTP to a server |
+| -i | Include the HTTP response headers in the output |
+| -k | Proceed and operate server connections otherwise considered insecure |
+| -o | Write to file instead of stdout |
+| -T | Transfers the specified local file to the remote URL, same as PUT method |
+| -v | Make the operation more talkative |
+| -x | Use the specified proxy (\[protocol://\]host\[:port\]) |
+| -X | Specifies a custom request method to use when communicating with the HTTP server |
+
+For more options run `man curl` or `curl -h`.
+
+| HTTP Request Methods |
+| --- |
+| GET |
+| HEAD |
+| POST |
+| PUT |
+| DELETE |
+| CONNECT |
+| OPTIONS |
+| TRACE |
+| TRACK (MS IIS) |
+| PATCH |
 
 ## Crack zip Files
 
