@@ -26,7 +26,9 @@ Delete Script from defaults
 
 # Reconnaissance(Information Gathering) start
 
-## - [hunter.io](https://hunter.io/) - known email and users for a specific domain
+- [hunter.io](https://hunter.io/) - known email and users for a specific domain
+
+
 - theharvester - search for emails in several search engines
 
     ```bash
@@ -125,7 +127,7 @@ Delete Script from defaults
     #it's like running nmap -Pn -vvv -p $PORTS -A -sC 127.0.0.1
     ```
 
-## nmap
+````nmap
 
     
  basic scan  
@@ -151,6 +153,7 @@ Faster But ports could be overseen because of retransmissoin cap
 
     #clean results
     grep '/tcp' FILENAME | awk -F "/" '{print $1}'| tr '\n' ',';echo
+    ````
 
 
 - masscan (kali): another fast port scanner
