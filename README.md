@@ -141,7 +141,7 @@ Standard scan
 Faster But ports could be overseen because of retransmissoin cap
 
 `nmap --script vuln -oN [FILE] [IP]`
-
+    help:
     #T4: speed 1-5, prefered 4, 
     #-p-: scan all 65K ports, 
     #-A: all information possible, 
