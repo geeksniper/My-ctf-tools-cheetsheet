@@ -348,6 +348,7 @@ Run `pngcheck -vtp7f filename.png` to view all info.
 `v` is for verbose, `t` and `7` display tEXt chunks, `p` displays contents of some other optional chunks and `f` forces continuation after major errors are encountered.
 
 Related write-ups:
+
 [PlaidCTF 2015](https://github.com/ctfs/write-ups-2015/tree/master/plaidctf-2015/forensics/png-uncorrupt)
 
 [SECCON Quals 2015](https://github.com/ctfs/write-ups-2015/tree/master/seccon-quals-ctf-2015/stegano/steganography-2)
