@@ -353,6 +353,31 @@ Related write-ups:
 
 [SECCON Quals 2015](https://github.com/ctfs/write-ups-2015/tree/master/seccon-quals-ctf-2015/stegano/steganography-2)
 
+## 7. Explore Colour & Bit Planes
+Images can be hidden inside of the colour/bit planes. Upload your image to this site [here](https://stegonline.georgeom.net/upload). On the image menu page, explore all options in the top panel (i.e. Full Red, Inverse, LSB etc).
+
+Go to "Browse Bit Planes", and browse through all available planes.
+
+If there appears to be some static at the top of any planes, try extracting the data from them in the "Extract Files/Data" menu.
+
+Related write-ups:
+
+[MicroCTF 2017](https://www.doyler.net/security-not-included/image-steganography-microctf-2017)
+
+[CSAW Quals 2016](https://github.com/krx/CTF-Writeups/blob/master/CSAW%2016%20Quals/for250%20-%20Watchword/jk_actual_writeup.md)
+
+[ASIS Cyber Security Contest Quals 2014](https://github.com/ctfs/write-ups-2014/tree/master/asis-ctf-quals-2014/blocks)
+
+[Cybersocks Regional 2016](https://mokhdzanifaeq.github.io/2016/12/14/cybersocks-regional-2016-color-writeup/)
+
+
+
+
+
+
+
+
+
 # Hash crack(password crack) start
 
 ## 1. John the ripper
