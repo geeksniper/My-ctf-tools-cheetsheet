@@ -26,7 +26,7 @@ Delete Script from defaults
 
 # Reconnaissance(Information Gathering) start
 
-- [hunter.io](https://hunter.io/) - known email and users for a specific domain
+## - [hunter.io](https://hunter.io/) - known email and users for a specific domain
 - theharvester - search for emails in several search engines
 
     ```bash
