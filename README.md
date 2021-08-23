@@ -51,6 +51,7 @@ Delete Script from defaults
 - [netcraft.com](https://sitereport.netcraft.com/) - Netcraft's internet data mining, find out the technologies and infrastructure used by any site.
 - [dnsdumpster](https://dnsdumpster.com/) - dns recon & research, find & lookup dns records
 - [ipinfo.io](http://ipinfo.io) - ip info
+- [osint framework](https://osintframework.com/) - OSINT framework focused on gathering information from free tools or resources.
 - [dehashed](https://www.dehashed.com) - find leaked emails and passwords
 - simplyemail - enumerate all the online places (github, target site etc)
 
