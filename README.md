@@ -326,7 +326,7 @@ Just to be sure what file you are facing with, check its type with `type filenam
  ## 3. Strings
 View all strings in the file with `strings filename`
 
-`strings -n 7 -t x filename.png.`
+`strings -n 7 -t x filename.png`
 
 We use -n 7 for strings of length 7+, and -t x to view- their position in the file.
 
@@ -335,8 +335,21 @@ We use -n 7 for strings of length 7+, and -t x to view- their position in the fi
 
 Check all image metadata. I would recommend [Jeffrey's Image Metadata Viewer](http://exif.regex.info/exif.cgi) for in-depth analysis.
 
+## 5. Binwalk
+We use binwalk to check image's for hidden embedded files.
 
+My preferred syntax is `binwalk -Me filename.png`. `-Me` is used to recursively extract any files.
 
+## 6. pngcheck
+We can use pngcheck to look for optional/correct broken chunks. This is vital if the image appears corrupt.
+
+Run `pngcheck -vtp7f filename.png` to view all info.
+
+`v` is for verbose, `t` and `7` display tEXt chunks, `p` displays contents of some other optional chunks and `f` forces continuation after major errors are encountered.
+
+Related write-ups:
+[PlaidCTF 2015](https://github.com/ctfs/write-ups-2015/tree/master/plaidctf-2015/forensics/png-uncorrupt)
+[SECCON Quals 2015](https://github.com/ctfs/write-ups-2015/tree/master/seccon-quals-ctf-2015/stegano/steganography-2)
 
 # Hash crack(password crack) start
 
