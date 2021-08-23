@@ -405,7 +405,16 @@ Related write-ups:
 
 [BlackAlps Y-NOT-CTF (JFK Challenge)](https://blog.compass-security.com/2017/11/write-up-blackalps-y-not-ctf/)
 
+## 11. Browse Colour Palette
+If the PNG is in [type 3](https://www.w3.org/TR/PNG-Chunks.html%20for%20type%20specs), you should look through the colour palette.
 
+This site has a feature for randomizing the colour palette, which may reveal the flag. You can also browse through each colour in the palette, if the flag is the same colour.
+
+It may also be worth looking at the palette indexes themselves, as a string may be visible from there.
+
+Related write-ups:
+
+[Plain CTF 2014](https://github.com/ctfs/write-ups-2014/tree/master/plaid-ctf-2014/doge-stege)
 
 
 # Hash crack(password crack) start
