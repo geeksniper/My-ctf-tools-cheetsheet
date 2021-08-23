@@ -315,8 +315,8 @@ For more options run `man curl` or `curl -h`.
 | TRACK (MS IIS) |
 | PATCH |
 
-**
-# Hash crack (password crack)
+
+# Hash crack(password crack) start
 
 ## 1. John the ripper
 
@@ -441,8 +441,8 @@ a72adf8a7a08d7939550c244b237c72c7d4236754<br>
 </tbody>
 </table>
   
-  # Hash crack (password crack) done
-  **
+  # Hash crack(password crack) done
+  
   
 ## FTP
 
