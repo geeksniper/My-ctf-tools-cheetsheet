@@ -128,16 +128,16 @@ Delete Script from defaults
     ```
 - nmap
     
-basic scan   
-`nmap -sV -sC -p- -oN [FILE] [IP]`
+    basic scan   
+    `nmap -sV -sC -p- -oN [FILE] [IP]`
 
-Standard scan
+    Standard scan
 
-`nmap -p- -sV -sC -A  --min-rate 1000 --max-retries 5 -oN [FILE] [IP]`
+    `nmap -p- -sV -sC -A  --min-rate 1000 --max-retries 5 -oN [FILE] [IP]`
 
-Faster But ports could be overseen because of retransmissoin cap
+    Faster But ports could be overseen because of retransmissoin cap
 
-`nmap --script vuln -oN [FILE] [IP]`
+    `nmap --script vuln -oN [FILE] [IP]`
 
     #T4: speed 1-5, prefered 4, 
     #-p-: scan all 65K ports, 
