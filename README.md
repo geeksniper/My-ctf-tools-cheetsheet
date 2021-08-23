@@ -315,6 +315,7 @@ For more options run `man curl` or `curl -h`.
 | TRACK (MS IIS) |
 | PATCH |
 
+# Hash crack (password crack)
 
 ## John the ripper
 
