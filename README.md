@@ -370,10 +370,40 @@ Related write-ups:
 
 [Cybersocks Regional 2016](https://mokhdzanifaeq.github.io/2016/12/14/cybersocks-regional-2016-color-writeup/)
 
+## 8. Extract LSB Data
+As mentioned in step 6, there could be some static in bit planes. If so, navigate to the "Extract Files/Data" page, and select the relevant bits.
 
+## 9. Check RGB Values
+ASCII Characters/other data can be hidden in the RGB(A) values of an image.
 
+Upload your image [here](https://stegonline.georgeom.net/upload), and preview the RGBA values. Try converting them to text, and see if any flag is found. It might be worth looking at just the R/G/B/A values on their own.
 
+Related write-ups:
 
+[MMA-CTF-2015](https://github.com/ctfs/write-ups-2015/tree/master/mma-ctf-2015/stego/miyako-350)
+
+## 10. Found a password? (Or not)
+If you've found a password, the goto application to check should be [steghide](http://steghide.sourceforge.net/). Bear in mind that steghide can be used without a password, too.
+
+You can extract data by running `steghide extract -sf filename.png`.
+
+It might also be worth checking some other tools:
+
+[OpenStego](https://www.openstego.com/)
+
+[Stegpy](https://github.com/Baldanos/Stegpy)
+
+[Outguess](https://outguess.rbcafe.com/)
+
+[jphide](http://linux01.gwdg.de/~alatham/stego.html)
+
+Related write-ups:
+
+[Xiomara 2019](https://github.com/mzfr/ctf-writeups/tree/master/xiomara-2019/Forensics/Steghide)
+
+[CSAW Quals 2015](https://github.com/ctfs/write-ups-2015/tree/master/csaw-ctf-2015/forensics/airport-200)
+
+[BlackAlps Y-NOT-CTF (JFK Challenge)](https://blog.compass-security.com/2017/11/write-up-blackalps-y-not-ctf/)
 
 
 
