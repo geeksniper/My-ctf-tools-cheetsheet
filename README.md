@@ -317,24 +317,24 @@ For more options run `man curl` or `curl -h`.
 
 # Hash crack (password crack)
 
-## John the ripper
+## 1. John the ripper
 
 `john --wordlist=/usr/share/wordlists/rockyou.txt hash`
 
-## hashcat
+## 2. hashcat
 
 ```
 sha256 
 hashcat --force -m 1400 --username hash.txt /usr/share/wordlists/rockyou.txt 
 ```
 
-## Crack zip Files
+## 3. Crack zip Files
 
 `fcrackzip -u -D -p '/usr/share/wordlists/rockyou.txt' "file.zip"`
 
 Note: Be careful with the quotes!
 
-# Crack openssl encrypted files
+## 4. Crack openssl encrypted files
 
 ```
 #!bin/bash
@@ -351,7 +351,7 @@ After this you get one file for every Password tried.
 Sort them by size and find the one unique size. Or try to grep the content.
 
 
-## Pass the hash smb
+## 5. Pass the hash smb
 
 With nt hash the `--pw-nt-hash` flag is needed, default is ntlm!
 
@@ -363,7 +363,7 @@ List all shares on <HOST>.
 
 Connect to <SHARE>.
   
-  ## Hash Examples
+  ## 6. Hash Examples
 <p>Likely just use hash-identifier for this but here are some example hashes:</p>
 <table>
 <thead>
