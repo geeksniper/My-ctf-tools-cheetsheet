@@ -108,31 +108,134 @@ Delete Script from defaults
 
 # Reconnaissance(Information Gathering) done
 
+# Scanning start
 
+- arp-scan (Kali) - gives all IP's on NAT
+- netdiscover (Kali) - show live IP's
 
-## Vim
+    ```bash
+    sudo netdiscover -r 10.0.0.0/24
+    ```
 
-`i` for insert mode
+- [rustscan](https://github.com/RustScan/RustScan#-usage) - Scans all 65k ports in 3 seconds and pipe them to NMAP
 
-`esc` to leave insert mode
+    ```bash
+    rustscan -a 127.0.0.1 -- -A -sC 
+    #it's like running nmap -Pn -vvv -p $PORTS -A -sC 127.0.0.1
+    ```
 
-To be continued with macros and all this handy shit
+- nmap
 
-
-
-
-## Nmap 
-
+    ```bash
+ basic scan  
 `nmap -sV -sC -p- -oN [FILE] [IP]`
-
-Standard
-
+Standard scan
 `nmap -p- -sV -sC -A  --min-rate 1000 --max-retries 5 -oN [FILE] [IP]`
-
 Faster But ports could be overseen because of retransmissoin cap
-
 `nmap --script vuln -oN [FILE] [IP]`
+    #T4: speed 1-5, prefered 4, 
+    #-p-: scan all 65K ports, 
+    #-A: all information possible, 
+    #-sS: stealth mode is running by default, it means that we do not establish a connection, instead after ACK we send a reset (SYN→SYNACK→RST)
+    #-sV: find versions
+    #-sc: default script
+    #-O: output to file
+    ls /usr/share/nmap/scripts/* | grep ftp #Search nmap scripts for keywords
 
+    #clean results
+    grep '/tcp' FILENAME | awk -F "/" '{print $1}'| tr '\n' ',';echo
+
+```
+
+- masscan (kali): another fast port scanner
+
+    ```bash
+    masscan -p1-65535 --rate 1000 10.0.0.101
+    ```
+
+- metasloit - auxiliary in msf is extra enumration and recon
+
+    ```bash
+    use auxiliary/scanner/smb/smb_version
+    ```
+
+- searchsploit (kali) - search exploit-db website offline
+
+    ```bash
+    searchsploit mod ssl 2
+    ```
+
+- [Nessus](https://www.tenable.com/products/nessus) - vulnerability assessment, it can scan for open ports, open vulnerabilities, directory busting
+- openvas - Vulnerability Assessment
+
+    ```bash
+    apt-get update
+    apt-get dist-upgrade -y
+    apt-get install openvas
+    openvas-setup
+    netstat -tulpn #Verify openvas is running using
+    #Login at https://127.0.0.1:9392 - credentials are generated during openvas-setup
+
+    ```
+
+## AIO Scanners
+
+- [nmap automator](https://github.com/21y4d/nmapAutomator) - A script that you can run in the background!
+
+    ```bash
+    ./nmapAutomator.sh <TARGET-IP> <TYPE>  
+    ./nmapAutomator.sh 10.1.1.1 All  
+    ./nmapAutomator.sh 10.1.1.1 Basic  
+    ./nmapAutomator.sh 10.1.1.1 Recon
+    ```
+
+- [autorecon](https://github.com/Tib3rius/AutoRecon) - multi-threaded network reconnaissance tool which performs automated enumeration of services
+
+    ```bash
+    autorecon 127.0.0.1
+
+    ```
+
+- [Vanquish](https://github.com/frizb/Vanquish) - AIO tool (NMap | Hydra | Nikto | Metasploit | | Gobuster | Dirb | Exploitdb | Nbtscan | | Ntpq | Enum4linux | Smbclient | Rpcclient | | Onesixtyone | Sslscan | Sslyze | Snmpwalk | | Ident-user-enum | Smtp-user-enum | Snmp-check | Cisco-torch | | Dnsrecon | Dig | Whatweb | Wafw00f | | Wpscan | Cewl | Curl | Mysql | Nmblookup | Searchsploit | | Nbtscan-unixwiz | Xprobe2 | Blindelephant | Showmount)
+
+    ```bash
+    echo "[IP]" > ~/tools/vanquish/hosts.txt
+    python2 Vanquish2.py -hostFile hosts.txt -logging -outputFolder ~/hackthebox/[BOXNAME]
+
+    ```
+
+- [hackerEnv](https://github.com/abdulr7mann/hackerEnv) - automation tool that quickly and easily sweep IPs and scan ports, vulnerabilities and exploit them
+
+    ```bash
+    ./hackerEnv -t 10.10.10.10
+    ```
+
+- [fsociety](https://github.com/Manisso/fsociety) - A Penetration Testing Framework, you will have every script that a hacker needs
+
+- recon-ag - full-featured web reconnaissance framework written in Python
+
+    ```bash
+    git clone https://github.com/lanmaster53/recon-ng.gitcd /recon-ng
+    ./recon-ng
+    show modules
+    help
+    ```
+
+- [autorecon](https://github.com/Tib3rius/AutoRecon) - multi-threaded network reconnaissance tool which performs automated enumeration of services
+
+    ```bash
+    autorecon 127.0.0.1
+    ```
+
+- [legion](https://github.com/carlospolop/legion) - Automatic Enumeration Tool
+
+    ```jsx
+    sudo ~/tools/legion/legion.py
+    options
+    set host 10.0.0.210
+    run
+    ```
+# Scanning done
 
 ## Local File Inclusion
 `http://[IP]/index.php?file=php://filter/convert.base64-encode/resource=index.php`
