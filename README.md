@@ -139,19 +139,6 @@ Delete Script from defaults
 
     `nmap --script vuln -oN [FILE] [IP]`
 
-    #T4: speed 1-5, prefered 4, 
-    #-p-: scan all 65K ports, 
-    #-A: all information possible, 
-    #-sS: stealth mode is running by default, it means that we do not establish a connection, instead after ACK we send a reset (SYN→SYNACK→RST)
-    #-sV: find versions
-    #-sc: default script
-    #-O: output to file
-    ls /usr/share/nmap/scripts/* | grep ftp #Search nmap scripts for keywords
-
-    #clean results
-    grep '/tcp' FILENAME | awk -F "/" '{print $1}'| tr '\n' ',';echo
-    ````
-
 
 - masscan (kali): another fast port scanner
 
