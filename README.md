@@ -315,6 +315,25 @@ For more options run `man curl` or `curl -h`.
 | TRACK (MS IIS) |
 | PATCH |
 
+# Image Steganography Checklist (start)
+
+## 1. type
+Just to be sure what file you are facing with, check its type with `type filename.`
+
+## 2. file
+ Determine file type `file filename`
+ 
+ ## 3. Strings
+View all strings in the file with `strings filename`
+`strings -n 7 -t x filename.png.`
+We use -n 7 for strings of length 7+, and -t x to view- their position in the file.
+
+## 4. Exif
+`exif image.png`
+Check all image metadata. I would recommend [Jeffrey's Image Metadata Viewer](http://exif.regex.info/exif.cgi) for in-depth analysis.
+
+
+
 
 # Hash crack(password crack) start
 
