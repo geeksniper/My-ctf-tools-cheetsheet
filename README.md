@@ -440,6 +440,8 @@ a72adf8a7a08d7939550c244b237c72c7d4236754<br>
 </tbody>
 </table>
   
+  # Hash crack (password crack) done
+  
 ## FTP
 
 `wget -r ftp://user:pass@server.com/`
