@@ -125,15 +125,21 @@ Delete Script from defaults
     #it's like running nmap -Pn -vvv -p $PORTS -A -sC 127.0.0.1
     ```
 
-- nmap
+## nmap
 
-    ```bash
+    
  basic scan  
+ 
 `nmap -sV -sC -p- -oN [FILE] [IP]`
+
 Standard scan
+
 `nmap -p- -sV -sC -A  --min-rate 1000 --max-retries 5 -oN [FILE] [IP]`
+
 Faster But ports could be overseen because of retransmissoin cap
+
 `nmap --script vuln -oN [FILE] [IP]`
+
     #T4: speed 1-5, prefered 4, 
     #-p-: scan all 65K ports, 
     #-A: all information possible, 
@@ -146,7 +152,6 @@ Faster But ports could be overseen because of retransmissoin cap
     #clean results
     grep '/tcp' FILENAME | awk -F "/" '{print $1}'| tr '\n' ',';echo
 
-```
 
 - masscan (kali): another fast port scanner
 
