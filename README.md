@@ -126,12 +126,9 @@ Delete Script from defaults
     rustscan -a 127.0.0.1 -- -A -sC 
     #it's like running nmap -Pn -vvv -p $PORTS -A -sC 127.0.0.1
     ```
-
-
 - nmap
     
- basic scan  
- 
+basic scan   
 `nmap -sV -sC -p- -oN [FILE] [IP]`
 
 Standard scan
@@ -141,7 +138,9 @@ Standard scan
 Faster But ports could be overseen because of retransmissoin cap
 
 `nmap --script vuln -oN [FILE] [IP]`
-    help:
+
+help: 
+    ````bash
     #T4: speed 1-5, prefered 4, 
     #-p-: scan all 65K ports, 
     #-A: all information possible, 
