@@ -127,8 +127,8 @@ Delete Script from defaults
     #it's like running nmap -Pn -vvv -p $PORTS -A -sC 127.0.0.1
     ```
 
-````nmap
 
+- nmap
     
  basic scan  
  
@@ -185,7 +185,6 @@ Faster But ports could be overseen because of retransmissoin cap
     netstat -tulpn #Verify openvas is running using
     #Login at https://127.0.0.1:9392 - credentials are generated during openvas-setup
 
-    ```
 
 ## AIO Scanners
 
