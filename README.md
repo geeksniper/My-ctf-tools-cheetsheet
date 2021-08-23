@@ -416,6 +416,7 @@ Related write-ups:
 
 [Plain CTF 2014](https://github.com/ctfs/write-ups-2014/tree/master/plaid-ctf-2014/doge-stege)
 
+# Image Steganography Checklist (done)
 
 # Hash crack(password crack) start
 
