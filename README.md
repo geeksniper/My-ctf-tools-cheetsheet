@@ -244,17 +244,9 @@ Community String is in both cases "private"
 
 `snmpwalk -c public [IP] -v 2c`
 
-## Hydra
 
-`hydra -l root -p admin 192.168.1.105 -t 4 ssh`
 
-`hydra -L root -P File 192.168.1.105 -t 4 ssh`
 
-`hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.X http-post-form "/login:username=^USER^&password=^PASS^:F=failed"`
-
-## John the ripper
-
-`john --wordlist=/usr/share/wordlists/rockyou.txt hash`
 
 ## curl
 
@@ -323,6 +315,18 @@ For more options run `man curl` or `curl -h`.
 | TRACK (MS IIS) |
 | PATCH |
 
+
+## John the ripper
+
+`john --wordlist=/usr/share/wordlists/rockyou.txt hash`
+
+## hashcat
+
+```
+sha256 
+hashcat --force -m 1400 --username hash.txt /usr/share/wordlists/rockyou.txt 
+```
+
 ## Crack zip Files
 
 `fcrackzip -u -D -p '/usr/share/wordlists/rockyou.txt' "file.zip"`
@@ -358,29 +362,7 @@ List all shares on <HOST>.
 
 Connect to <SHARE>.
   
-## FTP
-
-`wget -r ftp://user:pass@server.com/`
-
-Recursively download with ftp.
-
-## SMB Null Session
-
-`smbclient //10.10.10.X/IPC$ -W Workgroup -I 10.10.10.X -U ""`
-
-
-## WFUZZ 
-
-`wfuzz -z range,1-65600 --hc 500  "http://IP:PORT/dir?parameter=id&port=FUZZ"`
-
-Fuzz a range of ids/port numbers.
-
-
-## Wordlist with crunch
-
-`crunch 15 15 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*?=walkthrough%&0123456789" -t 123456789012345@ > wordlist.txt
-`
-## Hash Examples
+  ## Hash Examples
 <p>Likely just use hash-identifier for this but here are some example hashes:</p>
 <table>
 <thead>
@@ -457,14 +439,40 @@ a72adf8a7a08d7939550c244b237c72c7d4236754<br>
 </tbody>
 </table>
   
-  
-## hashcat
+## FTP
 
-```
-sha256 
-hashcat --force -m 1400 --username hash.txt /usr/share/wordlists/rockyou.txt 
-```
+`wget -r ftp://user:pass@server.com/`
+
+Recursively download with ftp.
+
+## SMB Null Session
+
+`smbclient //10.10.10.X/IPC$ -W Workgroup -I 10.10.10.X -U ""`
+
+
+## WFUZZ 
+
+`wfuzz -z range,1-65600 --hc 500  "http://IP:PORT/dir?parameter=id&port=FUZZ"`
+
+Fuzz a range of ids/port numbers.
+
+
+## Wordlist with crunch
+
+`crunch 15 15 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*?=walkthrough%&0123456789" -t 123456789012345@ > wordlist.txt
+`
+
+  
+  
+
 
 ## Basic Auth Bruteforcing 
 
-[Link](http://www.dailysecurity.net/2013/03/22/http-basic-authentication-dictionary-and-brute-force-attacks-with-burp-suite/)
+  ## Hydra
+
+`hydra -l root -p admin 192.168.1.105 -t 4 ssh`
+
+`hydra -L root -P File 192.168.1.105 -t 4 ssh`
+
+`hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.X http-post-form "/login:username=^USER^&password=^PASS^:F=failed"`
+  
