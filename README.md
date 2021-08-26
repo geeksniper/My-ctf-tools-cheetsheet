@@ -112,7 +112,7 @@ Delete Script from defaults
 # Reconnaissance(Information Gathering) done
 
 
-# Enumeration Open Ports
+# Enumeration Open Ports start
 
 [Pentesting Network](https://book.hacktricks.xyz/pentesting/pentesting-network)
 
@@ -684,7 +684,7 @@ $s=[adsisearcher]'(name=*)'; $s.SearchRoot = [adsi]"LDAP://CN=Dfs-Configuration,
 powershell ls "\\dc01\pipe\spoolss"
 ```
 
-
+# Enumeration Open Ports done
 
 
 # Scanning start
