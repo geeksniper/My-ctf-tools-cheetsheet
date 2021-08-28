@@ -429,9 +429,7 @@ sql
 Proxy -> Options -> Match and Replace
 ```
 
-![Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled.png](Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled.png)
-
-![Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled%201.png](Hacking%20Cheat%20Sheet%2053ddee9781a440ebb77926762047b8b3/Untitled%201.png)
+![step 1](https://github.com/geeksniper/My-ctf-tools-cheetsheet/blob/2292985ede3372879031a5020763ca43b9ff09c6/img/redirect1.png)
 
 ## kerberos (88):
 
