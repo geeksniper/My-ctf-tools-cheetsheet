@@ -430,6 +430,7 @@ Proxy -> Options -> Match and Replace
 ```
 
 ![step 1](https://github.com/geeksniper/My-ctf-tools-cheetsheet/blob/2292985ede3372879031a5020763ca43b9ff09c6/img/redirect1.png)
+![step 2](https://github.com/geeksniper/My-ctf-tools-cheetsheet/blob/937aa4927b87c43d692f431ae36b512a71a67590/img/redirect2.png)
 
 ## kerberos (88):
 
