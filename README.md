@@ -50,6 +50,7 @@ Delete Script from defaults
 - [sumrecon](https://github.com/Gr1mmie/sumrecon) - script that automate some of the above
 - [shodan.io](http://shodan.io) - find open ports and services online
 - [censys.io](https://search.censys.io/) - discove your internet assets by using ip or hosts.
+- [zoomeye.org](https://www.zoomeye.org/) - Zoomeye is the another search engine which is used mostly to see open devices that are vulnerable and most often used by pentesters to test or exploit there vulnerabilities over the internet.
 - [netcraft.com](https://sitereport.netcraft.com/) - Netcraft's internet data mining, find out the technologies and infrastructure used by any site.
 - [dnsdumpster](https://dnsdumpster.com/) - dns recon & research, find & lookup dns records
 - [ipinfo.io](http://ipinfo.io) - ip info
